@@ -22,7 +22,7 @@ function Pause-Menu {
 while ($true) {
     Clear-Host
     Write-Host "========================================"
-    Write-Host " 抖音故事素材流水线"
+    Write-Host " 多平台故事素材流水线"
     Write-Host "========================================"
     Write-Host ""
     Write-Host "1. 首次安装或修复工具"
@@ -47,6 +47,7 @@ while ($true) {
         "2" {
             Start-Process notepad.exe -ArgumentList (Resolve-Path ".\urls.txt").Path
             Write-Host "链接清单已经用记事本打开。每行放一个公开视频链接，保存后关闭记事本。"
+            Write-Host "支持范围取决于 yt-dlp，例如抖音、TikTok、X/Twitter、小红书、B站、YouTube 等公开链接。"
             Pause-Menu
         }
         "3" {
