@@ -3,8 +3,7 @@
 
 # Build and release artifacts
 dist/
-ShortVideoStoryPipeline.exe
-LingJiClipScribe.exe
+YingJiClipScribe.exe
 
 # Downloaded media, metadata, transcripts, and generated cards
 data/
