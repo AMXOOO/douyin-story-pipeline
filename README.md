@@ -1,4 +1,4 @@
-# 领记 ClipScribe
+# 影记 ClipScribe
 
 一个面向 Windows 的本地公开视频素材研究工具：将你选择的公开视频下载到本地，转写语音，并生成结构化故事卡片，供 AI 或人工进一步核实、分析和原创改编。
 
@@ -27,7 +27,7 @@
 1. 点击 GitHub 页面右上角的 `Code`。
 2. 选择 `Download ZIP`。
 3. 解压下载的 ZIP。
-4. 如果下载的是 Release 版本，优先双击 `LingJiClipScribe.exe`。
+4. 如果下载的是 Release 版本，优先双击 `YingJiClipScribe.exe`。
 5. 如果没有 exe，或者 exe 被安全软件拦截，可以双击备用入口 `START.cmd`。
 
 图形界面里按顺序操作：
@@ -112,7 +112,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build-windows-exe.ps1
 生成：
 
 ```text
-LingJiClipScribe.exe
+YingJiClipScribe.exe
 ```
 
 ## 快速开始
