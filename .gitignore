@@ -1,0 +1,22 @@
+# Local tools and large models
+.tools/
+
+# Downloaded media, metadata, transcripts, and generated cards
+data/
+
+# User-specific input
+urls.txt
+
+# Temporary platform responses and research output
+profile-*
+mix-*.json
+mix-posts*.json
+selection-*.md
+analysis-*.md
+*.html
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
