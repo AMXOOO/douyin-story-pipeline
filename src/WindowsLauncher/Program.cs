@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace LingJiClipScribe
+namespace YingJiClipScribe
 {
     internal static class Program
     {
@@ -53,7 +53,7 @@ namespace LingJiClipScribe
         {
             appRoot = AppDomain.CurrentDomain.BaseDirectory;
 
-            Text = "领记 ClipScribe";
+            Text = "影记 ClipScribe";
             StartPosition = FormStartPosition.CenterScreen;
             MinimumSize = new Size(920, 680);
             Size = new Size(1040, 740);
@@ -85,7 +85,7 @@ namespace LingJiClipScribe
 
             var title = new Label
             {
-                Text = "领记 ClipScribe",
+                Text = "影记 ClipScribe",
                 ForeColor = Color.White,
                 Font = new Font("Microsoft YaHei UI", 22F, FontStyle.Bold),
                 AutoSize = false,
@@ -222,7 +222,7 @@ namespace LingJiClipScribe
             openCardsButton.Click += delegate { OpenFolder(Path.Combine(appRoot, "data", "cards")); };
             readmeButton.Click += delegate { OpenFile(Path.Combine(appRoot, "README.md")); };
 
-            AppendLog("欢迎使用领记 ClipScribe。支持范围取决于 yt-dlp，例如抖音、TikTok、X/Twitter、小红书、B站、YouTube 等公开链接。");
+            AppendLog("欢迎使用影记 ClipScribe。支持范围取决于 yt-dlp，例如抖音、TikTok、X/Twitter、小红书、B站、YouTube 等公开链接。");
         }
 
         private Button CreateActionButton(string title, string description)
