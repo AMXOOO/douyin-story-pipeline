@@ -4,6 +4,7 @@
 # Build and release artifacts
 dist/
 ShortVideoStoryPipeline.exe
+LingJiClipScribe.exe
 
 # Downloaded media, metadata, transcripts, and generated cards
 data/
