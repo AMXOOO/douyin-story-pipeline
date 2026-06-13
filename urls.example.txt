@@ -1,2 +1,9 @@
 # One public video URL per line.
-https://www.douyin.com/video/0000000000000000000
+# Supported platforms depend on yt-dlp extractors.
+# Examples:
+# https://www.douyin.com/video/0000000000000000000
+# https://www.tiktok.com/@example/video/0000000000000000000
+# https://x.com/example/status/0000000000000000000
+# https://www.xiaohongshu.com/explore/000000000000000000000000
+# https://www.bilibili.com/video/BV0000000000
+# https://www.youtube.com/watch?v=00000000000
