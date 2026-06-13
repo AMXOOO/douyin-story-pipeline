@@ -2,7 +2,7 @@
 Set-Location $PSScriptRoot
 
 $source = Join-Path $PSScriptRoot "src\WindowsLauncher\Program.cs"
-$output = Join-Path $PSScriptRoot "LingJiClipScribe.exe"
+$output = Join-Path $PSScriptRoot "YingJiClipScribe.exe"
 $compiler = Join-Path $env:WINDIR "Microsoft.NET\Framework64\v4.0.30319\csc.exe"
 
 if (-not (Test-Path -LiteralPath $compiler)) {
