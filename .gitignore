@@ -1,6 +1,10 @@
 # Local tools and large models
 .tools/
 
+# Build and release artifacts
+dist/
+ShortVideoStoryPipeline.exe
+
 # Downloaded media, metadata, transcripts, and generated cards
 data/
 
