@@ -5,15 +5,36 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ShortVideoStoryPipeline
+namespace LingJiClipScribe
 {
     internal static class Program
     {
         [STAThread]
-        private static void Main()
+        private static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            if (args.Length == 2 && args[0].Equals("--screenshot", StringComparison.OrdinalIgnoreCase))
+            {
+                using (var form = new MainForm())
+                {
+                    form.Size = new Size(1040, 740);
+                    form.ShowInTaskbar = false;
+                    form.StartPosition = FormStartPosition.Manual;
+                    form.Location = new Point(-2000, -2000);
+                    form.Show();
+                    Application.DoEvents();
+
+                    using (var bitmap = new Bitmap(form.Width, form.Height))
+                    {
+                        form.DrawToBitmap(bitmap, new Rectangle(Point.Empty, form.Size));
+                        bitmap.Save(args[1], System.Drawing.Imaging.ImageFormat.Png);
+                    }
+                }
+                return;
+            }
+
             Application.Run(new MainForm());
         }
     }
@@ -32,40 +53,57 @@ namespace ShortVideoStoryPipeline
         {
             appRoot = AppDomain.CurrentDomain.BaseDirectory;
 
-            Text = "多平台故事素材流水线";
+            Text = "领记 ClipScribe";
             StartPosition = FormStartPosition.CenterScreen;
-            MinimumSize = new Size(860, 620);
-            Size = new Size(980, 700);
+            MinimumSize = new Size(920, 680);
+            Size = new Size(1040, 740);
             Font = new Font("Microsoft YaHei UI", 10F);
             BackColor = Color.FromArgb(248, 250, 252);
 
-            var header = new Panel
+            var root = new TableLayoutPanel
             {
-                Dock = DockStyle.Top,
-                Height = 132,
+                Dock = DockStyle.Fill,
+                RowCount = 2,
+                ColumnCount = 1,
+                BackColor = Color.FromArgb(248, 250, 252)
+            };
+            root.RowStyles.Add(new RowStyle(SizeType.Absolute, 132));
+            root.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            Controls.Add(root);
+
+            var header = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                RowCount = 2,
+                ColumnCount = 1,
+                Padding = new Padding(32, 22, 32, 18),
                 BackColor = Color.FromArgb(30, 41, 59)
             };
-            Controls.Add(header);
+            header.RowStyles.Add(new RowStyle(SizeType.Absolute, 48));
+            header.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            root.Controls.Add(header, 0, 0);
 
             var title = new Label
             {
-                Text = "多平台故事素材流水线",
+                Text = "领记 ClipScribe",
                 ForeColor = Color.White,
                 Font = new Font("Microsoft YaHei UI", 22F, FontStyle.Bold),
-                AutoSize = true,
-                Location = new Point(28, 24)
+                AutoSize = false,
+                Dock = DockStyle.Top,
+                Height = 44
             };
-            header.Controls.Add(title);
+            header.Controls.Add(title, 0, 0);
 
             var subtitle = new Label
             {
-                Text = "下载公开短视频，抽取音频，本地转写，并生成可用于分析和原创改编的故事卡。",
+                Text = "多平台公开视频转写与故事卡工具。下载、抽音频、转文字、生成创作素材，一步步带你完成。",
                 ForeColor = Color.FromArgb(203, 213, 225),
                 Font = new Font("Microsoft YaHei UI", 10.5F),
-                AutoSize = true,
-                Location = new Point(32, 78)
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleLeft
             };
-            header.Controls.Add(subtitle);
+            header.Controls.Add(subtitle, 0, 1);
 
             var content = new TableLayoutPanel
             {
@@ -75,41 +113,80 @@ namespace ShortVideoStoryPipeline
                 Padding = new Padding(22),
                 BackColor = Color.FromArgb(248, 250, 252)
             };
-            content.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 300));
+            content.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 320));
             content.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            Controls.Add(content);
+            root.Controls.Add(content, 0, 1);
 
-            var left = new Panel { Dock = DockStyle.Fill, BackColor = Color.Transparent };
+            var left = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.Transparent,
+                ColumnCount = 1,
+                RowCount = 3,
+                Padding = new Padding(0, 0, 18, 0)
+            };
+            left.RowStyles.Add(new RowStyle(SizeType.Absolute, 344));
+            left.RowStyles.Add(new RowStyle(SizeType.Absolute, 158));
+            left.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             content.Controls.Add(left, 0, 0);
 
-            setupButton = CreateActionButton("1  安装或修复工具", "首次使用先点这里，自动下载 yt-dlp、FFmpeg、whisper.cpp 和模型。", 0);
-            editButton = CreateActionButton("2  编辑视频链接", "打开 urls.txt，一行粘贴一个公开视频链接。", 92);
-            runButton = CreateActionButton("3  开始处理素材", "下载、转写并生成故事卡。", 184);
-            checkButton = CreateActionButton("检查运行环境", "确认本地工具和模型是否齐全。", 276);
+            var actionPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                AutoScroll = false,
+                Padding = new Padding(0)
+            };
+            left.Controls.Add(actionPanel, 0, 0);
 
-            left.Controls.Add(setupButton);
-            left.Controls.Add(editButton);
-            left.Controls.Add(runButton);
-            left.Controls.Add(checkButton);
+            setupButton = CreateActionButton("1  安装或修复工具", "首次使用先点这里，自动下载 yt-dlp、FFmpeg、whisper.cpp 和模型。");
+            editButton = CreateActionButton("2  编辑视频链接", "打开 urls.txt，一行粘贴一个公开视频链接。");
+            runButton = CreateActionButton("3  开始处理素材", "下载、转写并生成故事卡。");
+            checkButton = CreateActionButton("检查运行环境", "确认本地工具和模型是否齐全。");
 
-            var openRawButton = CreateSmallButton("打开下载视频", 370);
-            var openCardsButton = CreateSmallButton("打开故事卡", 420);
-            var readmeButton = CreateSmallButton("打开说明文档", 470);
-            left.Controls.Add(openRawButton);
-            left.Controls.Add(openCardsButton);
-            left.Controls.Add(readmeButton);
+            actionPanel.Controls.Add(setupButton);
+            actionPanel.Controls.Add(editButton);
+            actionPanel.Controls.Add(runButton);
+            actionPanel.Controls.Add(checkButton);
+
+            var utilityPanel = new FlowLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                FlowDirection = FlowDirection.TopDown,
+                WrapContents = false,
+                Padding = new Padding(0, 10, 0, 0)
+            };
+            left.Controls.Add(utilityPanel, 0, 1);
+
+            var openRawButton = CreateSmallButton("打开下载视频");
+            var openCardsButton = CreateSmallButton("打开故事卡");
+            var readmeButton = CreateSmallButton("打开说明文档");
+            utilityPanel.Controls.Add(openRawButton);
+            utilityPanel.Controls.Add(openCardsButton);
+            utilityPanel.Controls.Add(readmeButton);
 
             statusLabel = new Label
             {
                 Text = "就绪。建议第一次先安装或修复工具。",
                 ForeColor = Color.FromArgb(71, 85, 105),
                 AutoSize = false,
-                Location = new Point(0, 536),
-                Size = new Size(280, 52)
+                Dock = DockStyle.Fill,
+                Padding = new Padding(2, 12, 4, 0),
+                TextAlign = ContentAlignment.TopLeft
             };
-            left.Controls.Add(statusLabel);
+            left.Controls.Add(statusLabel, 0, 2);
 
-            var right = new Panel { Dock = DockStyle.Fill, BackColor = Color.White };
+            var right = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = Color.White,
+                ColumnCount = 1,
+                RowCount = 2,
+                Padding = new Padding(18)
+            };
+            right.RowStyles.Add(new RowStyle(SizeType.Absolute, 34));
+            right.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             content.Controls.Add(right, 1, 0);
 
             var logTitle = new Label
@@ -117,10 +194,11 @@ namespace ShortVideoStoryPipeline
                 Text = "运行日志",
                 Font = new Font("Microsoft YaHei UI", 13F, FontStyle.Bold),
                 ForeColor = Color.FromArgb(15, 23, 42),
-                AutoSize = true,
-                Location = new Point(18, 16)
+                AutoSize = false,
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleLeft
             };
-            right.Controls.Add(logTitle);
+            right.Controls.Add(logTitle, 0, 0);
 
             logBox = new TextBox
             {
@@ -131,15 +209,10 @@ namespace ShortVideoStoryPipeline
                 BackColor = Color.FromArgb(15, 23, 42),
                 ForeColor = Color.FromArgb(226, 232, 240),
                 Font = new Font("Consolas", 10F),
-                Location = new Point(18, 54),
-                Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
-                Size = new Size(600, 548)
+                Dock = DockStyle.Fill,
+                Margin = new Padding(0, 10, 0, 0)
             };
-            right.Controls.Add(logBox);
-            right.Resize += delegate
-            {
-                logBox.Size = new Size(right.ClientSize.Width - 36, right.ClientSize.Height - 72);
-            };
+            right.Controls.Add(logBox, 0, 1);
 
             setupButton.Click += delegate { RunPowerShell("setup-tools.ps1", "正在安装或修复工具..."); };
             editButton.Click += delegate { EditUrls(); };
@@ -149,17 +222,17 @@ namespace ShortVideoStoryPipeline
             openCardsButton.Click += delegate { OpenFolder(Path.Combine(appRoot, "data", "cards")); };
             readmeButton.Click += delegate { OpenFile(Path.Combine(appRoot, "README.md")); };
 
-            AppendLog("欢迎使用。支持范围取决于 yt-dlp，例如抖音、TikTok、X/Twitter、小红书、B站、YouTube 等公开链接。");
+            AppendLog("欢迎使用领记 ClipScribe。支持范围取决于 yt-dlp，例如抖音、TikTok、X/Twitter、小红书、B站、YouTube 等公开链接。");
         }
 
-        private Button CreateActionButton(string title, string description, int top)
+        private Button CreateActionButton(string title, string description)
         {
             var button = new Button
             {
                 Text = title + Environment.NewLine + description,
                 TextAlign = ContentAlignment.MiddleLeft,
-                Location = new Point(0, top),
-                Size = new Size(278, 76),
+                Size = new Size(292, 72),
+                Margin = new Padding(0, 0, 0, 12),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.White,
                 ForeColor = Color.FromArgb(15, 23, 42),
@@ -169,13 +242,13 @@ namespace ShortVideoStoryPipeline
             return button;
         }
 
-        private Button CreateSmallButton(string text, int top)
+        private Button CreateSmallButton(string text)
         {
             var button = new Button
             {
                 Text = text,
-                Location = new Point(0, top),
-                Size = new Size(278, 38),
+                Size = new Size(292, 38),
+                Margin = new Padding(0, 0, 0, 10),
                 FlatStyle = FlatStyle.Flat,
                 BackColor = Color.FromArgb(241, 245, 249),
                 ForeColor = Color.FromArgb(30, 41, 59)
